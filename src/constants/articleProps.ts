@@ -6,14 +6,14 @@ export const fontFamilyClasses = [
 	'merriweather',
 ] as const;
 
-export type FontFamiliesClasses = (typeof fontFamilyClasses)[number];
-
 export type OptionType = {
 	title: string;
 	value: string;
 	className: string;
 	optionClassName?: string;
 };
+
+export type FontFamiliesClasses = (typeof fontFamilyClasses)[number];
 
 export const fontFamilyOptions: OptionType[] & {
 	optionClassName?: FontFamiliesClasses;
