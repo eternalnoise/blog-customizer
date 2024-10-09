@@ -12,6 +12,7 @@ import {
 	fontFamilyOptions,
 	fontSizeOptions,
 } from 'src/constants/articleProps';
+import { useClose } from 'src/hooks/useClose';
 
 import { IArticleState } from 'src/types/types';
 
@@ -31,10 +32,10 @@ export const ArticleParamsForm = ({articleState, setArticleState}: ArticleParams
 	const formRef = useRef<HTMLDivElement>(null);
 
 	// открытие/закрытие формы
-	const [isOpen, setOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
 
 	function toggleFormOpen() {
-		setOpen(!isOpen);
+		setIsMenuOpen(!isMenuOpen);
 	}
 
 	// обновление состояния самой формы
@@ -72,25 +73,37 @@ export const ArticleParamsForm = ({articleState, setArticleState}: ArticleParams
 	}
 
 	// закрываем форму при клике вне сайдбара
-	useEffect(() => {
-		function handleClickOutside(event: MouseEvent) {
-		  if (formRef.current && !formRef.current.contains(event.target as Node) && isOpen) {
-			setOpen(false);
-		  }
-		}
+	function closeMenu() {
+		setIsMenuOpen(false);
+	}
+
+	useClose({
+        isOpen: isMenuOpen,
+        onClose: closeMenu,
+        rootRef: formRef,
+    });
+
+	// useEffect(() => {
+	// 	function handleClickOutside(event: MouseEvent) {
+	// 	  if (formRef.current && !formRef.current.contains(event.target as Node) && isMenuOpen) {
+	// 		setIsMenuOpen(false);
+	// 	  }
+	// 	}
+	// 
+	// 	document.addEventListener('mousedown', handleClickOutside);
+	// 	// убираем обработчик после закрытия формы
+	// 	return () => {
+	// 	  document.removeEventListener('mousedown', handleClickOutside);
+	// 	};
+	// 	}, [isMenuOpen]
+	// );
+
 	
-		document.addEventListener('mousedown', handleClickOutside);
-		// убираем обработчик после закрытия формы
-		return () => {
-		  document.removeEventListener('mousedown', handleClickOutside);
-		};
-		}, [isOpen]
-	);
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={toggleFormOpen} />
-			<aside ref={formRef} className={clsx(styles.container, isOpen && styles.container_open)}>
+			<ArrowButton isMenuOpen={isMenuOpen} onClick={toggleFormOpen} />
+			<aside ref={formRef} className={clsx(styles.container, {[styles.container_open]: isMenuOpen})}>
 				<form className={styles.form} onSubmit={updateForm} onReset={resetForm}>
 					<Text as={'h2'} size={31} weight={800} uppercase={true}>
 						Задайте параметры
